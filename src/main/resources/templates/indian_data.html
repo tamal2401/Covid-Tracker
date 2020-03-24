@@ -10,25 +10,44 @@
     <link href="../static/css/Layout.css" th:href="@{/css/Layout.css}" rel="stylesheet"/>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0.0/jquery.counterup.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.js"></script>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.4/components/navbar/">
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+            crossorigin="anonymous"></script>
+    <script>window.jQuery || document.write('<script src="/docs/4.4/assets/js/vendor/jquery.slim.min.js"><\/script>')
+    </script>
+    <script src="/docs/4.4/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+    <script src="/docs/4.4/assets/js/docs.min.js"></script>
+
 </head>
 
 <body>
 
-<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="#">COVID19 Tracker</a>
+    <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarColor01"
+            aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
-    <div class="collapse navbar-collapse" id="navbarsExample04">
+    <div class="collapse navbar-collapse" id="navbarColor01"    >
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="#" th:href="@{/welcome}">Home</a>
+            <li class="nav-item active">
+                <a class="nav-link" href="#" th:href="@{/welcome}">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#" th:href="@{/welcome/global}">Global Data</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#" th:href="@{/welcome}">Indian Data</a>
+                <a class="nav-link" href="#" th:href="@{/welcome/india}">Indian Data</a>
             </li>
         </ul>
     </div>
