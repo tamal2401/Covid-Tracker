@@ -29,4 +29,5 @@ public class CovidApplication {
 		System.out.println("async created");
 		return executor;
 	}
+
 }
