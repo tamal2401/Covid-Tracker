@@ -15,7 +15,7 @@
 </head>
 
 <body>
-<header>
+<!--<header>
     <div class="navbar navbar-inverse navbar-fixed-top" th:fragment="header">
         <div class="container">
             <div class="navbar-header">
@@ -25,8 +25,19 @@
             </div>
         </div>
     </div>
-</header>
+</header>-->
+
 <div class="container">
+    <div class="header">
+        <div class="header-right" th:fragment="header">
+
+            <div class="navbar-header">
+                <a class="active navbar-brand" th:href="@{/welcome}">Home</a>
+                <a class="navbar-brand" th:href="@{/welcome/global}">Global Data</a>
+                <a class="navbar-brand" th:href="@{/welcome/india}">Indian Data</a>
+            </div>
+        </div>
+    </div>
     <h4>
         This portal is designed to keep us updated about the number of people suffering due to its effect allover
         the world.<br>

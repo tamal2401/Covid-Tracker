@@ -27,10 +27,10 @@
         </div>
     </div>
 </header>-->
+<div class="container">
+    <div class="header">
+        <div class="header-right" th:fragment="header">
 
-<div class="header">
-    <div class="header-right" th:fragment="header">
-        <div class="container">
             <div class="navbar-header">
                 <a class="active navbar-brand" th:href="@{/welcome}">Home</a>
                 <a class="navbar-brand" th:href="@{/welcome/global}">Global Data</a>
@@ -38,9 +38,7 @@
             </div>
         </div>
     </div>
-</div>
 
-<div class="container">
     <h2> COVID19 data representation dashboard of India </h2>
     <br>
 
@@ -62,9 +60,7 @@
     </div>
     <br>
 
-</div>
 
-<div class="container">
     <table class="table table-bordered table-striped" border="2">
         <tr>
             <th>Sl. No</th>
@@ -88,6 +84,8 @@
 </footer>
 <script type="text/javascript">
     $(".num").counterUp({delay:10,time:1000});
+
+
 
 
 
