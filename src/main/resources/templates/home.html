@@ -16,17 +16,26 @@
 
 <body>
 
-<div class="container">
-    <div class="header">
-        <div class="header-right" th:fragment="header">
-            <div class="navbar-header">
-                <a class="active navbar-brand" th:href="@{/welcome}">Home</a>
-                <a class="navbar-brand" th:href="@{/welcome/global}">Global Data</a>
-                <a class="navbar-brand" th:href="@{/welcome/india}">Indian Data</a>
-            </div>
-        </div>
-    </div>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">COVID19 Tracker</a>
 
+    <div class="collapse navbar-collapse" id="navbarsExample04">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="#" th:href="@{/welcome}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" th:href="@{/welcome/global}">Global Data</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" th:href="@{/welcome}">Indian Data</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <br>
     <div class="container">
         <h4>
             This portal is designed to keep us updated about the number of people suffering due to its effect allover
