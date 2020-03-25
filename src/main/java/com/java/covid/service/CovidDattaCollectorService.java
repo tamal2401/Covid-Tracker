@@ -128,6 +128,10 @@ public class CovidDattaCollectorService {
         }
     }
 
+    public static void main(String[] args) {
+        String demo = "1#";
+    }
+
     //@Async("myExecutor")
     @Scheduled(cron = "0 0 * * * *")
     @Bean
@@ -148,22 +152,22 @@ public class CovidDattaCollectorService {
                 CovidDataPerState localData = new CovidDataPerState();
                 List<Element> allTdElements = each.select("td");
 
-                int slNo = Integer.valueOf(allTdElements.get(0).text());
+                int slNo = Integer.valueOf(allTdElements.get(0).text().replaceAll("[^0-9]", ""));
                 localData.setNo(slNo);
 
                 String stateName = allTdElements.get(1).text();
                 localData.setState(stateName);
 
-                int totalCasesIndian = Integer.valueOf(allTdElements.get(2).text());
+                int totalCasesIndian = Integer.valueOf(allTdElements.get(2).text().replaceAll("[^0-9]", ""));
                 localData.setTotalCasesIndian(totalCasesIndian);
 
-                int totalCasesForeign = Integer.valueOf(allTdElements.get(3).text());
+                int totalCasesForeign = Integer.valueOf(allTdElements.get(3).text().replaceAll("[^0-9]", ""));
                 localData.setTotalCasesForeign(totalCasesForeign);
 
-                int cured = Integer.valueOf(allTdElements.get(4).text());
+                int cured = Integer.valueOf(allTdElements.get(4).text().replaceAll("[^0-9]", ""));
                 localData.setCured(cured);
 
-                int death = Integer.valueOf(allTdElements.get(5).text());
+                int death = Integer.valueOf(allTdElements.get(5).text().replaceAll("[^0-9]", ""));
                 localData.setDeath(death);
 
                 totalEffectedInIndia += localData.getTotal();
