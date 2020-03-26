@@ -1,10 +1,23 @@
 package com.java.covid.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.java.covid.model.CovidAllIndiaDataModel;
 import com.java.covid.model.CovidDataPerState;
 import com.java.covid.model.CovidStatModel;
+import com.java.covid.model.timeseries.TimeSeriesDataModel;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.time.TimeSeries;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -13,9 +26,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.sql.SQLOutput;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,16 +43,15 @@ public class CovidDattaCollectorService {
 
     List<CovidStatModel> allStats = new ArrayList<>();
     CovidAllIndiaDataModel consolidatedDataOfIndia = new CovidAllIndiaDataModel();
+    List<TimeSeriesDataModel> seriesModel = new ArrayList<>();
 
-
-
-    public List<CovidStatModel> getGlobalStats(){
+    public List<CovidStatModel> getGlobalStats() {
         return allStats;
     }
 
     //@Async("myExecutor")
-    @Scheduled(cron = "0 0 * * * *")
-    @Bean
+    @Scheduled(cron = "0 0/4 * * * *")
+    //@Bean
     public void getCovidData() throws IOException {
         List<CovidStatModel> tempStats = new ArrayList<>();
         RestTemplate template = new RestTemplate();
@@ -49,7 +63,7 @@ public class CovidDattaCollectorService {
             model.setState(record.get("Province/State"));
             model.setCountry(record.get("Country/Region"));
             model.setLatestCases(getCellValue(record, 1));
-            model.setChangeInCasualties(getCellValue(record, 1)-getCellValue(record,2));
+            model.setChangeInCasualties(getCellValue(record, 1) - getCellValue(record, 2));
             tempStats.add(model);
         });
         List<CovidStatModel> collectionObj = sortDataCountryWise(tempStats);
@@ -57,10 +71,10 @@ public class CovidDattaCollectorService {
         System.out.println("global data fetched");
     }
 
-    private int getCellValue(CSVRecord record, int lastCellIndex){
+    private int getCellValue(CSVRecord record, int lastCellIndex) {
         int countt = 0;
         String cellValue = record.get(record.size() - lastCellIndex);
-        if(null==cellValue){
+        if (null == cellValue) {
             cellValue = "0";
         }
         return Integer.parseInt(cellValue);
@@ -71,12 +85,12 @@ public class CovidDattaCollectorService {
         Map<String, TempDataPerCountry> tempMap = new HashMap<>();
 
 
-        for(CovidStatModel stat : tempStats){
-            if(tempMap.containsKey(stat.getCountry())) {
+        for (CovidStatModel stat : tempStats) {
+            if (tempMap.containsKey(stat.getCountry())) {
                 TempDataPerCountry countryValue = tempMap.get(stat.getCountry());
                 countryValue.incrementCurrentCount(stat.getLatestCases());
                 countryValue.incrementChangeInDelta(stat.getChangeInCasualties());
-            }else{
+            } else {
                 tempMap.put(stat.getCountry(), new TempDataPerCountry(stat.getLatestCases(), stat.getChangeInCasualties()));
             }
         }
@@ -94,11 +108,11 @@ public class CovidDattaCollectorService {
         return collectionObj;
     }
 
-    class TempDataPerCountry{
+    class TempDataPerCountry {
         private int effectedCount;
         private int changeinLastoneDay;
 
-        public TempDataPerCountry(int effectedCount, int changeinLastoneDay){
+        public TempDataPerCountry(int effectedCount, int changeinLastoneDay) {
             this.effectedCount = effectedCount;
             this.changeinLastoneDay = changeinLastoneDay;
         }
@@ -133,8 +147,8 @@ public class CovidDattaCollectorService {
     }
 
     //@Async("myExecutor")
-    @Scheduled(cron = "0 0 * * * *")
-    @Bean
+    @Scheduled(cron = "0 0/4 * * * *")
+    //@Bean
     public void getIndianStats() throws IOException {
 
         int totalEffectedInIndia = 0;
@@ -146,7 +160,7 @@ public class CovidDattaCollectorService {
         Document doc = Jsoup.connect(INDIAN_DATA_URL).get();
         List<Element> dataRows = doc.getElementsByAttributeValue("class", "content newtab").first().select("div > table > tbody > tr");
 
-        if(dataRows.size()>1) {
+        if (dataRows.size() > 1) {
             dataRows = dataRows.subList(0, 27);
             for (Element each : dataRows) {
                 CovidDataPerState localData = new CovidDataPerState();
@@ -198,13 +212,51 @@ public class CovidDattaCollectorService {
     public List<CovidStatModel> getGlobaldata() {
         return this.allStats;
     }
-    
-    /*//@Bean
-    public String getTimeSeriesData(){
+
+    @Bean
+    public String getTimeSeriesData() {
         List<CovidStatModel> tempStats = new ArrayList<>();
+        List<TimeSeriesDataModel> listOfTimeSeriesData = new ArrayList<>();
         RestTemplate template = new RestTemplate();
         String response = template.getForObject(TIME_SERIES_DATA_URL, String.class);
-        System.out.println(response);
+        ObjectMapper mapper = new ObjectMapper();
+        JSONObject obj = new JSONObject(response);
+        JSONArray array = obj.getJSONArray("cases_time_series");
+        array.forEach(each -> {
+            //TimeSeriesDataModel temp = gson.fromJson(each.toString(), TimeSeriesDataModel.class);
+            StringReader reader = new StringReader(each.toString());
+            try {
+                TimeSeriesDataModel temp = mapper.readValue(reader, TimeSeriesDataModel.class);
+                listOfTimeSeriesData.add(temp);
+                this.seriesModel = listOfTimeSeriesData;
+            } catch (IOException e) {
+                System.out.println("error occured while deserializing :" + e.getMessage());
+            }
+        });
+        createTimeSeriesChart(listOfTimeSeriesData);
         return response;
-    }*/
+    }
+
+    private void createTimeSeriesChart(List<TimeSeriesDataModel> listOfTimeSeriesData) {
+        if(listOfTimeSeriesData.size()>0){
+            DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
+
+            listOfTimeSeriesData.stream().forEach(each -> line_chart_dataset.addValue(each.getTotalconfirmed(), "count", each.getDate()));
+
+            JFreeChart lineChartObject = ChartFactory.createLineChart(
+                    "Effected Count VS Time","Time",
+                    "Effected Count",
+                    line_chart_dataset, PlotOrientation.VERTICAL,
+                    true,true,false);
+
+            int width = 640;    /* Width of the image */
+            int height = 480;   /* Height of the image */
+            File lineChart = new File( "src/main/resources/effectedount_vs_time.jpeg" );
+            try {
+                ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
+            }catch (IOException e){
+                System.out.println("Error occured while saving Effected Count VS Time graph chart : "+e.getMessage());
+            }
+        }
+    }
 }
