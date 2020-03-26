@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 public class CovidDattaCollectorService {
 
-    private static String DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv";
+    private static String DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv";
     private String INDIAN_DATA_URL = "https://www.mohfw.gov.in/";
 
     List<CovidStatModel> allStats = new ArrayList<>();
@@ -147,7 +147,7 @@ public class CovidDattaCollectorService {
         List<Element> dataRows = doc.getElementsByAttributeValue("class", "content newtab").first().select("div > table > tbody > tr");
 
         if(dataRows.size()>1) {
-            dataRows.remove(dataRows.size() - 1);
+            dataRows = dataRows.subList(0, 26);
             for (Element each : dataRows) {
                 CovidDataPerState localData = new CovidDataPerState();
                 List<Element> allTdElements = each.select("td");
