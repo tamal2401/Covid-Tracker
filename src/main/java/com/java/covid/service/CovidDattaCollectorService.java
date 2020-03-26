@@ -37,7 +37,7 @@ public class CovidDattaCollectorService {
 
     //@Async("myExecutor")
     @Scheduled(cron = "0 0 * * * *")
-    //@Bean
+    @Bean
     public void getCovidData() throws IOException {
         List<CovidStatModel> tempStats = new ArrayList<>();
         RestTemplate template = new RestTemplate();
@@ -134,7 +134,7 @@ public class CovidDattaCollectorService {
 
     //@Async("myExecutor")
     @Scheduled(cron = "0 0 * * * *")
-    //@Bean
+    @Bean
     public void getIndianStats() throws IOException {
 
         int totalEffectedInIndia = 0;
@@ -147,7 +147,7 @@ public class CovidDattaCollectorService {
         List<Element> dataRows = doc.getElementsByAttributeValue("class", "content newtab").first().select("div > table > tbody > tr");
 
         if(dataRows.size()>1) {
-            dataRows = dataRows.subList(0, 26);
+            dataRows = dataRows.subList(0, 27);
             for (Element each : dataRows) {
                 CovidDataPerState localData = new CovidDataPerState();
                 List<Element> allTdElements = each.select("td");
@@ -199,12 +199,12 @@ public class CovidDattaCollectorService {
         return this.allStats;
     }
     
-    @Bean
+    /*//@Bean
     public String getTimeSeriesData(){
         List<CovidStatModel> tempStats = new ArrayList<>();
         RestTemplate template = new RestTemplate();
         String response = template.getForObject(TIME_SERIES_DATA_URL, String.class);
         System.out.println(response);
         return response;
-    }
+    }*/
 }
