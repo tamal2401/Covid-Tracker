@@ -81,7 +81,8 @@
         <tr>
             <th>Sl. No</th>
             <th>State of India</th>
-            <th>Effected Count in each state</th>
+            <th>Total Effected</th>
+            <th>Active</th>
             <th>Number of Cured Total</th>
             <th>Deaths</th>
         </tr>
@@ -89,6 +90,7 @@
             <td th:text="${eachstate.no}"></td>
             <td th:text="${eachstate.state}"></td>
             <td th:text="${eachstate.getTotal()}">0</td>
+            <td th:text="${eachstate.getActive()}">0</td>
             <td th:text="${eachstate.cured}">0</td>
             <td th:text="${eachstate.death}">0</td>
         </tr>

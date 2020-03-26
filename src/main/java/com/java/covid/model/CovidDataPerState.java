@@ -6,8 +6,17 @@ public class CovidDataPerState {
     private String state;
     private int totalCasesIndian = 0;
     private int totalCasesForeign = 0;
+    private int active = 0;
     private int cured = 0;
     private int death = 0;
+
+    public int getActive() {
+        int active = this.getTotal()-(Math.addExact(this.getCured(), this.getDeath()));
+        if (active<0){
+            return 0;
+        }
+        return active;
+    }
 
     public int getNo() {
         return no;
@@ -42,7 +51,7 @@ public class CovidDataPerState {
     }
 
     public int getTotal() {
-        return this.totalCasesForeign+this.totalCasesIndian;
+        return this.totalCasesForeign + this.totalCasesIndian;
     }
 
     public int getCured() {
