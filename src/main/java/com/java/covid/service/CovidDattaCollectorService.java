@@ -9,7 +9,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.context.annotation.Bean;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -23,6 +22,7 @@ import java.util.stream.Collectors;
 @Service
 public class CovidDattaCollectorService {
 
+    private static final String TIME_SERIES_DATA_URL = "https://api.covid19india.org/data.json";
     private static String DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv";
     private String INDIAN_DATA_URL = "https://www.mohfw.gov.in/";
 
@@ -37,7 +37,7 @@ public class CovidDattaCollectorService {
 
     //@Async("myExecutor")
     @Scheduled(cron = "0 0 * * * *")
-    @Bean
+    //@Bean
     public void getCovidData() throws IOException {
         List<CovidStatModel> tempStats = new ArrayList<>();
         RestTemplate template = new RestTemplate();
@@ -134,7 +134,7 @@ public class CovidDattaCollectorService {
 
     //@Async("myExecutor")
     @Scheduled(cron = "0 0 * * * *")
-    @Bean
+    //@Bean
     public void getIndianStats() throws IOException {
 
         int totalEffectedInIndia = 0;
@@ -152,22 +152,22 @@ public class CovidDattaCollectorService {
                 CovidDataPerState localData = new CovidDataPerState();
                 List<Element> allTdElements = each.select("td");
 
-                int slNo = Integer.valueOf(allTdElements.get(0).text().replaceAll("[^0-9]", ""));
+                int slNo = getIntegerCellvalueBasedOnindex(allTdElements, 0);
                 localData.setNo(slNo);
 
                 String stateName = allTdElements.get(1).text();
                 localData.setState(stateName);
 
-                int totalCasesIndian = Integer.valueOf(allTdElements.get(2).text().replaceAll("[^0-9]", ""));
+                int totalCasesIndian = getIntegerCellvalueBasedOnindex(allTdElements, 2);
                 localData.setTotalCasesIndian(totalCasesIndian);
 
-                int totalCasesForeign = Integer.valueOf(allTdElements.get(3).text().replaceAll("[^0-9]", ""));
+                int totalCasesForeign = getIntegerCellvalueBasedOnindex(allTdElements, 3);
                 localData.setTotalCasesForeign(totalCasesForeign);
 
-                int cured = Integer.valueOf(allTdElements.get(4).text().replaceAll("[^0-9]", ""));
+                int cured = getIntegerCellvalueBasedOnindex(allTdElements, 4);
                 localData.setCured(cured);
 
-                int death = Integer.valueOf(allTdElements.get(5).text().replaceAll("[^0-9]", ""));
+                int death = getIntegerCellvalueBasedOnindex(allTdElements, 5);
                 localData.setDeath(death);
 
                 totalEffectedInIndia += localData.getTotal();
@@ -187,11 +187,24 @@ public class CovidDattaCollectorService {
         System.out.println("Indian stat fetched");
     }
 
+    private Integer getIntegerCellvalueBasedOnindex(List<Element> allTdElements, int i) {
+        return Integer.valueOf(allTdElements.get(i).text().replaceAll("[^0-9]", ""));
+    }
+
     public CovidAllIndiaDataModel getAllIndianStats() {
         return this.consolidatedDataOfIndia;
     }
 
     public List<CovidStatModel> getGlobaldata() {
         return this.allStats;
+    }
+    
+    @Bean
+    public String getTimeSeriesData(){
+        List<CovidStatModel> tempStats = new ArrayList<>();
+        RestTemplate template = new RestTemplate();
+        String response = template.getForObject(TIME_SERIES_DATA_URL, String.class);
+        System.out.println(response);
+        return response;
     }
 }
