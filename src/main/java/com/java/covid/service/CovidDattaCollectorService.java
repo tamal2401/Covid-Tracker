@@ -283,4 +283,13 @@ public class CovidDattaCollectorService {
         return formattedDate;
     }
 
+    public static void main(String[] args) {
+        Date date = new Date();
+        String strDateFormat = "dd MMM hh:mm a";
+        DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+5:30"));
+        String formattedDate = dateFormat.format(date);
+        System.out.println("Current time of the day using Date - 12 hour format: " + formattedDate);
+    }
+
 }
