@@ -88,16 +88,16 @@
         <tr>
             <th>Sl. No</th>
             <th>State of India</th>
-            <th>Active</th>
             <th>Confirmed</th>
+            <th>Active</th>
             <th>Deaths</th>
             <th>Recovered</th>
         </tr>
         <tr th:each="eachstate,iterationStatus : ${totalDataOfIndia}">
             <td th:text= ${iterationStatus.count}></td>
             <td th:text="${eachstate.state}"></td>
-            <td th:text="${eachstate.active}">0</td>
             <td th:text="${eachstate.confirmed}">0</td>
+            <td th:text="${eachstate.active}">0</td>
             <td th:text="${eachstate.deaths}">0</td>
             <td th:text="${eachstate.recovered}">0</td>
         </tr>
