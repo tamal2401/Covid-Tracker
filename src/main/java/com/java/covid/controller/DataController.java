@@ -1,6 +1,6 @@
 package com.java.covid.controller;
 
-import com.java.covid.model.CovidAllIndiaDataModel;
+import com.java.covid.model.india.CovidAllIndiaDataModel;
 import com.java.covid.model.CovidStatModel;
 import com.java.covid.service.CovidDattaCollectorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +20,12 @@ public class DataController {
     @GetMapping(path = "/welcome/india")
     public String welcomePage(Model model) throws IOException {
         CovidAllIndiaDataModel allIndiaStats = dataService.getAllIndianStats();
-        model.addAttribute("totalCured", allIndiaStats.getTotalCured());
-        model.addAttribute("totalEffected", allIndiaStats.getTotalEffectedCount());
+
+        model.addAttribute("totalCured", allIndiaStats.getTotalRecovered());
+        model.addAttribute("totalEffected", allIndiaStats.getTotalConfirmed());
         model.addAttribute("totalDeath", allIndiaStats.getTotalDeath());
         model.addAttribute("totalDataOfIndia", allIndiaStats.getStateData());
+        model.addAttribute("lastUpdated", allIndiaStats.getLastUpdated());
         return "indian_data";
     }
 

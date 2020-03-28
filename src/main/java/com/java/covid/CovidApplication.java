@@ -1,5 +1,6 @@
 package com.java.covid;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +29,11 @@ public class CovidApplication {
 		executor.initialize();
 		System.out.println("async created");
 		return executor;
+	}
+
+	@Bean
+	public ObjectMapper createMapper(){
+		return new ObjectMapper();
 	}
 
 }

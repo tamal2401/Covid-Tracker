@@ -32,7 +32,7 @@
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">COVID19 Tracker</a>
+    <a class="navbar-brand" href="#" th:href="@{/welcome}">COVID19 Tracker</a>
     <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarColor01"
             aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -50,7 +50,7 @@
                 <a class="nav-link" href="#" th:href="@{/welcome/india}">Indian Data</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#" th:href="@{/welcome/india}">Indian Data</a>
+                <a class="nav-link" href="#" th:href="@{/welcome/india}">Visualisation</a>
             </li>
         </ul>
     </div>
@@ -63,17 +63,21 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-4">
+            <div class="col-3">
                 <h6>Total Corona Effected Count : </h6>
                 <div class="num"><span th:text="${totalEffected}"></span></div>
             </div>
-            <div class="col-4">
+            <div class="col-3">
                 <h6>Total Death Count : </h6>
+                <div class="num"><span th:text="${totalCured}"></span></div>
+            </div>
+            <div class="col-3">
+                <h6>Total Cured Count : </h6>
                 <div class="num"><span th:text="${totalDeath}"></span></div>
             </div>
-            <div class="col-4">
-                <h6>Total Cured Count : </h6>
-                <div class="num"><span th:text="${totalCured}"></span></div>
+            <div class="col-3">
+                <h6>Last Updated </h6>
+                <div class="text"><span th:text="${lastUpdated}"></span></div>
             </div>
         </div>
     </div>
@@ -84,18 +88,18 @@
         <tr>
             <th>Sl. No</th>
             <th>State of India</th>
-            <th>Total Effected</th>
             <th>Active</th>
-            <th>Number of Cured Total</th>
+            <th>Confirmed</th>
             <th>Deaths</th>
+            <th>Recovered</th>
         </tr>
         <tr th:each="eachstate : ${totalDataOfIndia}">
             <td th:text="${eachstate.no}"></td>
             <td th:text="${eachstate.state}"></td>
-            <td th:text="${eachstate.getTotal()}">0</td>
-            <td th:text="${eachstate.getActive()}">0</td>
-            <td th:text="${eachstate.cured}">0</td>
-            <td th:text="${eachstate.death}">0</td>
+            <td th:text="${eachstate.active}">0</td>
+            <td th:text="${eachstate.confirmed}">0</td>
+            <td th:text="${eachstate.deaths}">0</td>
+            <td th:text="${eachstate.recovered}">0</td>
         </tr>
     </table>
 </div>

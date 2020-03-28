@@ -1,41 +1,45 @@
 package com.java.covid.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.java.covid.model.CovidAllIndiaDataModel;
-import com.java.covid.model.CovidDataPerState;
+import com.java.covid.model.india.CovidAllIndiaDataModel;
+import com.java.covid.model.india.CovidDataPerStateOfIndia;
 import com.java.covid.model.CovidStatModel;
 import com.java.covid.model.timeseries.TimeSeriesDataModel;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtilities;
-import org.jfree.chart.JFreeChart;
+import org.apache.commons.lang3.StringUtils;
+import org.jfree.chart.*;
+import org.jfree.chart.axis.*;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.time.TimeSeries;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.sql.SQLOutput;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.FieldPosition;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class CovidDattaCollectorService {
+
+    @Autowired
+    ObjectMapper mapper;
 
     private static final String TIME_SERIES_DATA_URL = "https://api.covid19india.org/data.json";
     private static String DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv";
@@ -45,13 +49,14 @@ public class CovidDattaCollectorService {
     CovidAllIndiaDataModel consolidatedDataOfIndia = new CovidAllIndiaDataModel();
     List<TimeSeriesDataModel> seriesModel = new ArrayList<>();
 
+
     public List<CovidStatModel> getGlobalStats() {
         return allStats;
     }
 
     //@Async("myExecutor")
-    @Scheduled(cron = "0 0/4 * * * *")
-    //@Bean
+    @Scheduled(cron = "0 0 */4 * * *")
+    @Bean
     public void getCovidData() throws IOException {
         List<CovidStatModel> tempStats = new ArrayList<>();
         RestTemplate template = new RestTemplate();
@@ -142,69 +147,6 @@ public class CovidDattaCollectorService {
         }
     }
 
-    public static void main(String[] args) {
-        String demo = "1#";
-    }
-
-    //@Async("myExecutor")
-    @Scheduled(cron = "0 0/4 * * * *")
-    //@Bean
-    public void getIndianStats() throws IOException {
-
-        int totalEffectedInIndia = 0;
-        int totalCured = 0;
-        int totalDeath = 0;
-
-        CovidAllIndiaDataModel allData = new CovidAllIndiaDataModel();
-        List<CovidDataPerState> allStateData = new ArrayList<>();
-        Document doc = Jsoup.connect(INDIAN_DATA_URL).get();
-        List<Element> dataRows = doc.getElementsByAttributeValue("class", "content newtab").first().select("div > table > tbody > tr");
-
-        if (dataRows.size() > 1) {
-            dataRows = dataRows.subList(0, 27);
-            for (Element each : dataRows) {
-                CovidDataPerState localData = new CovidDataPerState();
-                List<Element> allTdElements = each.select("td");
-
-                int slNo = getIntegerCellvalueBasedOnindex(allTdElements, 0);
-                localData.setNo(slNo);
-
-                String stateName = allTdElements.get(1).text();
-                localData.setState(stateName);
-
-                int totalCasesIndian = getIntegerCellvalueBasedOnindex(allTdElements, 2);
-                localData.setTotalCasesIndian(totalCasesIndian);
-
-                int totalCasesForeign = getIntegerCellvalueBasedOnindex(allTdElements, 3);
-                localData.setTotalCasesForeign(totalCasesForeign);
-
-                int cured = getIntegerCellvalueBasedOnindex(allTdElements, 4);
-                localData.setCured(cured);
-
-                int death = getIntegerCellvalueBasedOnindex(allTdElements, 5);
-                localData.setDeath(death);
-
-                totalEffectedInIndia += localData.getTotal();
-                totalCured += cured;
-                totalDeath += death;
-
-                allStateData.add(localData);
-            }
-        }
-
-        allData.setStateData(allStateData);
-        allData.setTotalEffectedCount(totalEffectedInIndia);
-        allData.setTotalCured(totalCured);
-        allData.setTotalDeath(totalDeath);
-
-        this.consolidatedDataOfIndia = allData;
-        System.out.println("Indian stat fetched");
-    }
-
-    private Integer getIntegerCellvalueBasedOnindex(List<Element> allTdElements, int i) {
-        return Integer.valueOf(allTdElements.get(i).text().replaceAll("[^0-9]", ""));
-    }
-
     public CovidAllIndiaDataModel getAllIndianStats() {
         return this.consolidatedDataOfIndia;
     }
@@ -214,49 +156,131 @@ public class CovidDattaCollectorService {
     }
 
     @Bean
+    @Scheduled(cron = "0 0 */4 * * *")
     public String getTimeSeriesData() {
         List<CovidStatModel> tempStats = new ArrayList<>();
         List<TimeSeriesDataModel> listOfTimeSeriesData = new ArrayList<>();
         RestTemplate template = new RestTemplate();
         String response = template.getForObject(TIME_SERIES_DATA_URL, String.class);
         ObjectMapper mapper = new ObjectMapper();
-        JSONObject obj = new JSONObject(response);
+        if (response != null && !StringUtils.isBlank(response)) {
+            JSONObject obj = new JSONObject(response);
+            getIndianStats(obj);
+            extractTimeSeriesDataFromJson(listOfTimeSeriesData, obj);
+
+            createTimeSeriesChart(listOfTimeSeriesData);
+        } else {
+
+        }
+        return response;
+    }
+
+    private void getIndianStats(JSONObject obj) {
+        List<CovidDataPerStateOfIndia> allStateData = new ArrayList<>();
+        JSONArray jArray = obj.getJSONArray("statewise");
+        jArray.forEach(each -> {
+            StringReader reader = new StringReader(each.toString());
+            try {
+                CovidDataPerStateOfIndia temp = mapper.readValue(reader, CovidDataPerStateOfIndia.class);
+                if (!temp.getState().toLowerCase().equalsIgnoreCase("total")) {
+                    allStateData.add(temp);
+                }
+            } catch (IOException e) {
+                System.out.println("error occured while deserializing :" + e.getMessage());
+            }
+        });
+        int totalConfirmed = allStateData.stream().mapToInt(each -> each.getConfirmed()).sum();
+        int totaldeaths = allStateData.stream().mapToInt(each -> each.getDeaths()).sum();
+        int totalRecovered = allStateData.stream().mapToInt(each -> each.getRecovered()).sum();
+
+        this.consolidatedDataOfIndia.setStateData(allStateData);
+        this.consolidatedDataOfIndia.setTotalConfirmed(totalConfirmed);
+        this.consolidatedDataOfIndia.setTotalDeath(totaldeaths);
+        this.consolidatedDataOfIndia.setTotalRecovered(totalRecovered);
+        this.consolidatedDataOfIndia.setLastUpdated(getCurrentTime());
+    }
+
+    private void extractTimeSeriesDataFromJson(List<TimeSeriesDataModel> listOfTimeSeriesData, JSONObject obj) {
         JSONArray array = obj.getJSONArray("cases_time_series");
+        //array.remove(array.length() - 1);
         array.forEach(each -> {
             //TimeSeriesDataModel temp = gson.fromJson(each.toString(), TimeSeriesDataModel.class);
             StringReader reader = new StringReader(each.toString());
             try {
                 TimeSeriesDataModel temp = mapper.readValue(reader, TimeSeriesDataModel.class);
                 listOfTimeSeriesData.add(temp);
-                this.seriesModel = listOfTimeSeriesData;
             } catch (IOException e) {
                 System.out.println("error occured while deserializing :" + e.getMessage());
             }
         });
-        createTimeSeriesChart(listOfTimeSeriesData);
-        return response;
+        this.seriesModel = listOfTimeSeriesData;
     }
 
     private void createTimeSeriesChart(List<TimeSeriesDataModel> listOfTimeSeriesData) {
-        if(listOfTimeSeriesData.size()>0){
+        if (listOfTimeSeriesData.size() > 0) {
             DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
 
-            listOfTimeSeriesData.stream().forEach(each -> line_chart_dataset.addValue(each.getTotalconfirmed(), "count", each.getDate()));
+            listOfTimeSeriesData.stream().forEach(each -> line_chart_dataset.addValue(each.getTotalconfirmed(), "Effected Count", each.getDate()));
+            listOfTimeSeriesData.stream().forEach(each -> line_chart_dataset.addValue(each.getTotalrecovered(), "Total Recovered", each.getDate()));
 
             JFreeChart lineChartObject = ChartFactory.createLineChart(
-                    "Effected Count VS Time","Time",
+                    "Effected Count VS Time", "Time",
                     "Effected Count",
                     line_chart_dataset, PlotOrientation.VERTICAL,
-                    true,true,false);
+                    true, true, false);
 
-            int width = 640;    /* Width of the image */
-            int height = 480;   /* Height of the image */
-            File lineChart = new File( "src/main/resources/effectedount_vs_time.jpeg" );
+            CategoryPlot plot = lineChartObject.getCategoryPlot();
+            LineAndShapeRenderer renderer = new LineAndShapeRenderer();
+
+            renderer.setSeriesPaint(0, Color.ORANGE);
+            renderer.setSeriesPaint(1, Color.blue);
+
+            // sets thickness for series (using strokes)
+            renderer.setSeriesStroke(0, new BasicStroke(2.0f));
+            renderer.setSeriesStroke(1, new BasicStroke(2.0f));
+
+            plot.setRenderer(renderer);
+            plot.setBackgroundPaint(Color.white);
+            plot.setRangeGridlinesVisible(true);
+            plot.setRangeGridlinePaint(Color.gray);
+
+            plot.setDomainGridlinesVisible(true);
+            plot.setDomainGridlinePaint(Color.gray);
+
+            // To configure the Y Axis based on the interval
+            ValueAxis axis = plot.getRangeAxis();
+            //((NumberAxis) axis).setTickUnit(new NumberTickUnit(50));
+            ((NumberAxis) axis).setNumberFormatOverride(new DecimalFormat() {
+                public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
+                    return toAppendTo.append((int) (number / 100));
+                }
+            });
+            axis.setTickLabelsVisible(true);
+            plot.setRangeAxis(axis);
+            plot.configureRangeAxes();
+
+            CategoryAxis xAxis = plot.getDomainAxis();
+
+            plot.configureDomainAxes();
+
+            int width = 800;    /* Width of the image */
+            int height = 400;   /* Height of the image */
+            File lineChartFile = new File("src/main/resources/LineCharts/effectedount_vs_time.jpeg");
             try {
-                ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
-            }catch (IOException e){
-                System.out.println("Error occured while saving Effected Count VS Time graph chart : "+e.getMessage());
+                ChartUtilities.saveChartAsJPEG(lineChartFile, lineChartObject, width, height);
+            } catch (IOException e) {
+                System.out.println("Error occured while saving Effected Count VS Time graph chart : " + e.getMessage());
             }
         }
     }
+
+    public String getCurrentTime() {
+        Date date = new Date();
+        String strDateFormat = "dd MMM hh:mm a";
+        DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
+        String formattedDate = dateFormat.format(date);
+        System.out.println("Current time of the day using Date - 12 hour format: " + formattedDate);
+        return formattedDate;
+    }
+
 }
