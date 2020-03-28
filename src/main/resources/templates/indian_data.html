@@ -3,7 +3,7 @@
 
 <head>
     <title>Coronavirus Tracker Application</title>
-
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
@@ -50,7 +50,7 @@
                 <a class="nav-link" href="#" th:href="@{/welcome/india}">Indian Data</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#" th:href="@{/welcome/india}">Visualisation</a>
+                <a class="nav-link" href="#" th:href="@{/welcome/mapping}">Visualisation</a>
             </li>
         </ul>
     </div>
@@ -93,8 +93,8 @@
             <th>Deaths</th>
             <th>Recovered</th>
         </tr>
-        <tr th:each="eachstate : ${totalDataOfIndia}">
-            <td th:text="${eachstate.no}"></td>
+        <tr th:each="eachstate,iterationStatus : ${totalDataOfIndia}">
+            <td th:text= ${iterationStatus.count}></td>
             <td th:text="${eachstate.state}"></td>
             <td th:text="${eachstate.active}">0</td>
             <td th:text="${eachstate.confirmed}">0</td>

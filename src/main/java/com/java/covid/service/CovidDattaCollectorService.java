@@ -47,7 +47,7 @@ public class CovidDattaCollectorService {
 
     List<CovidStatModel> allStats = new ArrayList<>();
     CovidAllIndiaDataModel consolidatedDataOfIndia = new CovidAllIndiaDataModel();
-    List<TimeSeriesDataModel> seriesModel = new ArrayList<>();
+    public List<TimeSeriesDataModel> seriesModel = new ArrayList<>();
 
 
     public List<CovidStatModel> getGlobalStats() {
@@ -167,7 +167,6 @@ public class CovidDattaCollectorService {
             JSONObject obj = new JSONObject(response);
             getIndianStats(obj);
             extractTimeSeriesDataFromJson(listOfTimeSeriesData, obj);
-
             createTimeSeriesChart(listOfTimeSeriesData);
         } else {
 
