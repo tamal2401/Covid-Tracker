@@ -30,9 +30,11 @@ public class DataController {
                 .collect(Collectors.toList());*/
         List<Integer> activeIncidentList = plotData.stream().map(each -> each.getTotalconfirmed()).collect(Collectors.toList());
         List<String> dailyDate = plotData.stream().map(each -> each.getDate()).collect(Collectors.toList());
+        List<Integer> recoveredList = plotData.stream().map(each -> each.getTotalrecovered()).collect(Collectors.toList());
 
         model.addAttribute("count", activeIncidentList);
         model.addAttribute("date", dailyDate);
+        model.addAttribute("recovered", recoveredList);
         return "visualize_data";
     }
 
