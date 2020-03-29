@@ -74,11 +74,13 @@
 
     <table class="table table-bordered table-striped">
         <tr>
+            <th>Sl. No</th>
             <th>Country</th>
             <th>Current Effected Count</th>
             <th>Number of changes in past one day</th>
         </tr>
-        <tr th:each="eachstate : ${allGlobalData}">
+        <tr th:each="eachstate, iterationStatus : ${allGlobalData}">
+            <td th:text="${iterationStatus.count}"></td>
             <td th:text="${eachstate.country}"></td>
             <td th:text="${eachstate.latestCases}">0</td>
             <td th:text="${eachstate.changeInCasualties}">0</td>
