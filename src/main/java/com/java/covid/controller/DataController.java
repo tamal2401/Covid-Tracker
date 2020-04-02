@@ -43,7 +43,7 @@ public class DataController {
         CovidAllIndiaDataModel allIndiaStats = dataService.getAllIndianStats();
 
         model.addAttribute("totalCured", allIndiaStats.getTotalRecovered());
-        model.addAttribute("totalEffected", allIndiaStats.getTotalConfirmed());
+        model.addAttribute("totalConfirmed", allIndiaStats.getTotalConfirmed());
         model.addAttribute("totalDeath", allIndiaStats.getTotalDeath());
         model.addAttribute("totalDataOfIndia", allIndiaStats.getStateData());
         model.addAttribute("lastUpdated", allIndiaStats.getLastUpdated());
