@@ -167,7 +167,7 @@ public class CovidDattaCollectorService {
             JSONObject obj = new JSONObject(response);
             getIndianStats(obj);
             extractTimeSeriesDataFromJson(listOfTimeSeriesData, obj);
-            createTimeSeriesChart(listOfTimeSeriesData);
+            // createTimeSeriesChart(listOfTimeSeriesData);
         } else {
 
         }

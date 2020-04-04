@@ -10,6 +10,42 @@ public class CovidDataPerStateOfIndia {
     private String lastupdatedtime;
     private int recovered;
     private DeltaInformation delta;
+    private int deltaconfirmed;
+    private int deltadeaths;
+    private int deltarecovered;
+    private String statecode;
+
+    public int getDeltaconfirmed() {
+        return deltaconfirmed;
+    }
+
+    public void setDeltaconfirmed(int deltaconfirmed) {
+        this.deltaconfirmed = deltaconfirmed;
+    }
+
+    public int getDeltadeaths() {
+        return deltadeaths;
+    }
+
+    public void setDeltadeaths(int deltadeaths) {
+        this.deltadeaths = deltadeaths;
+    }
+
+    public int getDeltarecovered() {
+        return deltarecovered;
+    }
+
+    public void setDeltarecovered(int deltarecovered) {
+        this.deltarecovered = deltarecovered;
+    }
+
+    public String getStatecode() {
+        return statecode;
+    }
+
+    public void setStatecode(String statecode) {
+        this.statecode = statecode;
+    }
 
     public int getNo() {
         return no;
