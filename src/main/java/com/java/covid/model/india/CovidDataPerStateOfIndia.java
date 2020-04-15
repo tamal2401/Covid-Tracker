@@ -14,6 +14,15 @@ public class CovidDataPerStateOfIndia {
     private int deltadeaths;
     private int deltarecovered;
     private String statecode;
+    private String statenotes;
+
+    public String getStatenotes() {
+        return statenotes;
+    }
+
+    public void setStatenotes(String statenotes) {
+        this.statenotes = statenotes;
+    }
 
     public int getDeltaconfirmed() {
         return deltaconfirmed;

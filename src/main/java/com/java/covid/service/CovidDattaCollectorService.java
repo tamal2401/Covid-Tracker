@@ -1,6 +1,7 @@
 package com.java.covid.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.java.covid.model.india.CovidAllIndiaDataModel;
 import com.java.covid.model.india.CovidDataPerStateOfIndia;
 import com.java.covid.model.CovidStatModel;
@@ -22,6 +23,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -71,8 +74,7 @@ public class CovidDattaCollectorService {
             model.setChangeInCasualties(getCellValue(record, 1) - getCellValue(record, 2));
             tempStats.add(model);
         });
-        List<CovidStatModel> collectionObj = sortDataCountryWise(tempStats);
-        this.allStats = collectionObj;
+        this.allStats = sortDataCountryWise(tempStats);;
         System.out.println("global data fetched");
     }
 
@@ -157,7 +159,7 @@ public class CovidDattaCollectorService {
 
     @Bean
     @Scheduled(cron = "0 0 */4 * * *")
-    public String getTimeSeriesData() {
+    public String getTimeSeriesData() throws Exception {
         List<CovidStatModel> tempStats = new ArrayList<>();
         List<TimeSeriesDataModel> listOfTimeSeriesData = new ArrayList<>();
         RestTemplate template = new RestTemplate();
@@ -169,7 +171,7 @@ public class CovidDattaCollectorService {
             extractTimeSeriesDataFromJson(listOfTimeSeriesData, obj);
             // createTimeSeriesChart(listOfTimeSeriesData);
         } else {
-
+            throw new Exception("Get Indian Covid19 data call failed");
         }
         return response;
     }
@@ -219,8 +221,10 @@ public class CovidDattaCollectorService {
         if (listOfTimeSeriesData.size() > 0) {
             DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
 
-            listOfTimeSeriesData.stream().forEach(each -> line_chart_dataset.addValue(each.getTotalconfirmed(), "Effected Count", each.getDate()));
-            listOfTimeSeriesData.stream().forEach(each -> line_chart_dataset.addValue(each.getTotalrecovered(), "Total Recovered", each.getDate()));
+            listOfTimeSeriesData.stream().forEach(each -> {
+                line_chart_dataset.addValue(each.getTotalconfirmed(), "Effected Count", each.getDate());
+                line_chart_dataset.addValue(each.getTotalrecovered(), "Total Recovered", each.getDate());
+            });
 
             JFreeChart lineChartObject = ChartFactory.createLineChart(
                     "Effected Count VS Time", "Time",
@@ -281,5 +285,19 @@ public class CovidDattaCollectorService {
         String formattedDate = dateFormat.format(date);
         System.out.println("Current time of the day using Date - 12 hour format: " + formattedDate);
         return formattedDate;
+    }
+
+    @PreDestroy
+    public void preDestroy() throws IOException {
+        // String stateDataJson = new Gson().toJson(consolidatedDataOfIndia);
+        if(consolidatedDataOfIndia.getStateData().size()>=1){
+            mapper.writeValue(new File("src/main/resources/StateWise_Data/state_covid19_data.json"), consolidatedDataOfIndia);
+        }
+    }
+
+    @PostConstruct
+    public void postcreation() throws IOException {
+        CovidAllIndiaDataModel indiaDataModel = mapper.readValue(new File("src/main/resources/StateWise_Data/state_covid19_data.json"), CovidAllIndiaDataModel.class);
+        this.consolidatedDataOfIndia = indiaDataModel;
     }
 }

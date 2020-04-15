@@ -49,4 +49,15 @@ public class CovidAllIndiaDataModel {
     public void setTotalDeath(int totalDeath) {
         this.totalDeath = totalDeath;
     }
+
+    @Override
+    public String toString() {
+        return "CovidAllIndiaDataModel{" +
+                "stateData=" + stateData +
+                ", totalConfirmed=" + totalConfirmed +
+                ", totalRecovered=" + totalRecovered +
+                ", totalDeath=" + totalDeath +
+                ", lastUpdated='" + lastUpdated + '\'' +
+                '}';
+    }
 }
