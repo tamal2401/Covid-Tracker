@@ -205,7 +205,6 @@ public class CovidDattaCollectorService {
         JSONArray array = obj.getJSONArray("cases_time_series");
         //array.remove(array.length() - 1);
         array.forEach(each -> {
-            //TimeSeriesDataModel temp = gson.fromJson(each.toString(), TimeSeriesDataModel.class);
             StringReader reader = new StringReader(each.toString());
             try {
                 TimeSeriesDataModel temp = mapper.readValue(reader, TimeSeriesDataModel.class);
@@ -295,7 +294,6 @@ public class CovidDattaCollectorService {
         }
     }
 
-    @PostConstruct
     public void postcreation() throws IOException {
         CovidAllIndiaDataModel indiaDataModel = mapper.readValue(new File("src/main/resources/StateWise_Data/state_covid19_data.json"), CovidAllIndiaDataModel.class);
         this.consolidatedDataOfIndia = indiaDataModel;
