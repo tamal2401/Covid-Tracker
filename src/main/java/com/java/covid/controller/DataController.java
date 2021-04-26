@@ -42,9 +42,9 @@ public class DataController {
     public String welcomePage(Model model) throws IOException {
         CovidAllIndiaDataModel allIndiaStats = dataService.getAllIndianStats();
 
-        model.addAttribute("totalCured", allIndiaStats.getTotalRecovered());
-        model.addAttribute("totalConfirmed", allIndiaStats.getTotalConfirmed());
-        model.addAttribute("totalDeath", allIndiaStats.getTotalDeath());
+        model.addAttribute("totalCured", formatNumber(allIndiaStats.getTotalRecovered()));
+        model.addAttribute("totalConfirmed", formatNumber(allIndiaStats.getTotalConfirmed()));
+        model.addAttribute("totalDeath", formatNumber(allIndiaStats.getTotalDeath()));
         model.addAttribute("totalDataOfIndia", allIndiaStats.getStateData());
         model.addAttribute("lastUpdated", allIndiaStats.getLastUpdated());
         return "indian_data";
@@ -55,15 +55,24 @@ public class DataController {
         List<CovidStatModel> globalStats = dataService.getGlobaldata();
         long totalCountWorldWide = globalStats.stream().mapToLong(each -> each.getLatestCases()).sum();
         model.addAttribute("allGlobalData", globalStats);
-        model.addAttribute("TotalCountWorldWide", totalCountWorldWide);
+        model.addAttribute("TotalCountWorldWide", formatNumber(totalCountWorldWide));
         return "global_data";
     }
 
-    @GetMapping(path = {"/","/welcome"})
+    @GetMapping(path = {"/", "/welcome"})
     public String getIndexPage(Model model) throws IOException {
         List<CovidStatModel> globalStats = dataService.getGlobaldata();
         long totalCountWorldWide = globalStats.stream().mapToLong(each -> each.getLatestCases()).sum();
-        model.addAttribute("TotalCountWorldWide", totalCountWorldWide);
+        model.addAttribute("TotalCountWorldWide", formatNumber(totalCountWorldWide));
         return "home";
+    }
+
+    private String formatNumber(long num) {
+        if (num > 999 && num < 1000000) {
+            return String.valueOf((num / 1000)) + "K +"; // convert to K for number from > 1000 < 1 million
+        } else if (num > 1000000) {
+            return String.valueOf((num / 1000000)) + "M +"; // convert to M for number from > 1 million
+        }
+        return String.valueOf(num); // if value < 1000, nothing to do
     }
 }

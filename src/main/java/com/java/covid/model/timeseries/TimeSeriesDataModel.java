@@ -1,10 +1,11 @@
 package com.java.covid.model.timeseries;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TimeSeriesDataModel {
 
     private String date;

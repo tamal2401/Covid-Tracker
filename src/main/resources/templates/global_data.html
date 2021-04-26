@@ -29,44 +29,51 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.js"></script>
 </head>
 
+    <style>
+		footer {
+            clear: both;
+            position: relative;
+            height: 0px;
+            margin-top: 0px;
+        }
+		#custom-nav {
+			box-shadow: 0px 8px 15px #ddddce;
+		}
+    </style>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#" th:href="@{/welcome}">COVID19 Tracker</a>
-    <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarColor01"
-            aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #2271e0;" id="custom-nav">
+    <a class="navbar-brand" href="#" th:href="@{/welcome}">Covid Tracker</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03"
+            aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="collapse navbar-collapse" id="navbarColor01">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="#" th:href="@{/welcome}">Home <span class="sr-only">(current)</span></a>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <li class="nav-item">
+                <a class="nav-link active" th:href="@{/welcome/global}">Global</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#" th:href="@{/welcome/global}">Global Data</a>
+                <a class="nav-link" th:href="@{/welcome/india}">Indian Data</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#" th:href="@{/welcome/india}">Indian Data</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#" th:href="@{/welcome/mapping}">Visualisation</a>
+                <a class="nav-link" th:href="@{/welcome/mapping}">Visualisation</a>
             </li>
         </ul>
     </div>
 </nav>
 
 <div class="container">
+
     <br>
     <h2> Global COVID19 data representation dashboard </h2>
     <br>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <h6>Total number of Corona Effected people worldwide : </h6>
-                <div class="num"><span th:text="${TotalCountWorldWide}"></span></div>
-            </div>
+    <div class="row">
+        <div class="col-12">
+            <h6>Total number of Corona Effected people worldwide : </h6>
+            <div class="num"><span th:text="${TotalCountWorldWide}"></span></div>
         </div>
     </div>
     <br>
@@ -87,12 +94,30 @@
         </tr>
     </table>
 </div>
-<footer>
-    <h6><span>** Data may vary as per the data source</span></h6>
+<br>
+<footer class="footer">
+    <div class="container text-center">
+        <a class="fa" href="https://www.facebook.com/Tamal2401" target="_blank">
+            <i class="fab fa-facebook-f fa-2x " aria-hidden="true"></i>
+        </a>
+        <a class="fab" href="https://www.instagram.com/tamal2401/" target="_blank" style="padding-left:25px;">
+            <i class="fab fa-instagram fa-2x " aria-hidden="true"></i>
+        </a>
+        <a class="fab" href="https://twitter.com/TamalDA65614950" target="_blank" style="padding-left:25px;">
+            <i class="fab fa-twitter fa-2x " aria-hidden="true"></i>
+        </a>
+        <a class="fab" href="https://github.com/tamal2401" target="_blank" style="padding-left:25px;">
+            <i class="fab fa-github fa-2x " aria-hidden="true"></i>
+        </a>
+    </div>
+    <div class="text-center text-muted">
+        <p>&copy; All rights reserved.
+        </p>
+    </div>
 </footer>
 
 <script type="text/javascript">
-    $(".num").counterUp({delay:10,time:1000});
+<!--    $(".num").counterUp({delay:10,time:1000});-->
 
 </script>
 </body>
