@@ -193,11 +193,14 @@ public class CovidDattaCollectorService {
         int totalConfirmed = allStateData.stream().mapToInt(each -> each.getConfirmed()).sum();
         int totaldeaths = allStateData.stream().mapToInt(each -> each.getDeaths()).sum();
         int totalRecovered = allStateData.stream().mapToInt(each -> each.getRecovered()).sum();
+        JSONArray testedArray = obj.getJSONArray("tested");
+        String totalVaccineted = testedArray.getJSONObject(testedArray.length()-1).optString("totalindividualsvaccinated");
 
         this.consolidatedDataOfIndia.setStateData(allStateData);
         this.consolidatedDataOfIndia.setTotalConfirmed(totalConfirmed);
         this.consolidatedDataOfIndia.setTotalDeath(totaldeaths);
         this.consolidatedDataOfIndia.setTotalRecovered(totalRecovered);
+        this.consolidatedDataOfIndia.setTotalVaccineted(Long.parseLong(totalVaccineted));
         this.consolidatedDataOfIndia.setLastUpdated(getCurrentTime());
     }
 

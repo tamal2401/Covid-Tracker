@@ -46,6 +46,7 @@ public class DataController {
         model.addAttribute("totalConfirmed", formatNumber(allIndiaStats.getTotalConfirmed()));
         model.addAttribute("totalDeath", formatNumber(allIndiaStats.getTotalDeath()));
         model.addAttribute("totalDataOfIndia", allIndiaStats.getStateData());
+        model.addAttribute("totalVaccineted", formatNumber(allIndiaStats.getTotalVaccineted()));
         model.addAttribute("lastUpdated", allIndiaStats.getLastUpdated());
         return "indian_data";
     }

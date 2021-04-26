@@ -1,7 +1,16 @@
 package com.java.covid.model.india;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 import java.util.List;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class CovidAllIndiaDataModel {
 
     private List<CovidDataPerStateOfIndia> stateData;
@@ -9,55 +18,5 @@ public class CovidAllIndiaDataModel {
     private int totalRecovered;
     private int totalDeath;
     private String lastUpdated;
-
-    public String getLastUpdated() {
-        return lastUpdated;
-    }
-
-    public void setLastUpdated(String lastUpdated) {
-        this.lastUpdated = lastUpdated;
-    }
-
-    public List<CovidDataPerStateOfIndia> getStateData() {
-        return stateData;
-    }
-
-    public void setStateData(List<CovidDataPerStateOfIndia> stateData) {
-        this.stateData = stateData;
-    }
-
-    public int getTotalConfirmed() {
-        return totalConfirmed;
-    }
-
-    public void setTotalConfirmed(int totalConfirmed) {
-        this.totalConfirmed = totalConfirmed;
-    }
-
-    public int getTotalRecovered() {
-        return totalRecovered;
-    }
-
-    public void setTotalRecovered(int totalRecovered) {
-        this.totalRecovered = totalRecovered;
-    }
-
-    public int getTotalDeath() {
-        return totalDeath;
-    }
-
-    public void setTotalDeath(int totalDeath) {
-        this.totalDeath = totalDeath;
-    }
-
-    @Override
-    public String toString() {
-        return "CovidAllIndiaDataModel{" +
-                "stateData=" + stateData +
-                ", totalConfirmed=" + totalConfirmed +
-                ", totalRecovered=" + totalRecovered +
-                ", totalDeath=" + totalDeath +
-                ", lastUpdated='" + lastUpdated + '\'' +
-                '}';
-    }
+    private long totalVaccineted;
 }
