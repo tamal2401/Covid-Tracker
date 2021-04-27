@@ -8,9 +8,6 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Pattern;
 
 @Component
 @Order(2)
@@ -33,7 +30,7 @@ public class MetricFilter implements Filter {
         chain.doFilter(request, response);
 
         int status = ((HttpServletResponse) response).getStatus();
-        if(!StringUtils.isBlank(contextUri) && (contextUri.startsWith("/welcome") || StringUtils.equals(contextUri, "/"))){
+        if(!StringUtils.isBlank(contextUri) && (contextUri.startsWith(WELCOME_URI_PREFIX) || StringUtils.equals(contextUri, "/"))){
             metricService.increaseCount(TOTAL_COUNTER, status);
         }
         metricService.increaseCount(req, status);
