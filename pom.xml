@@ -9,8 +9,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.java.covid</groupId>
-    <artifactId>covid</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>covid-tracker</artifactId>
+    <version>v1.0</version>
     <name>covid</name>
     <description>Demo project for Spring Boot</description>
 
