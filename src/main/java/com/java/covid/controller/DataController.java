@@ -1,17 +1,20 @@
 package com.java.covid.controller;
 
+import com.java.covid.metrices.MetricService;
+import com.java.covid.metrices.MetricServiceImpl;
 import com.java.covid.model.india.CovidAllIndiaDataModel;
 import com.java.covid.model.CovidStatModel;
-import com.java.covid.model.india.EachDayCountMapping;
 import com.java.covid.model.timeseries.TimeSeriesDataModel;
 import com.java.covid.service.CovidDattaCollectorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -19,6 +22,9 @@ public class DataController {
 
     @Autowired
     CovidDattaCollectorService dataService;
+
+    @Autowired
+    MetricService metricService;
 
     @GetMapping(path = "/welcome/mapping")
     public String visualizePage(Model model) throws IOException {
@@ -41,7 +47,6 @@ public class DataController {
     @GetMapping(path = "/welcome/india")
     public String welcomePage(Model model) throws IOException {
         CovidAllIndiaDataModel allIndiaStats = dataService.getAllIndianStats();
-
         model.addAttribute("totalCured", formatNumber(allIndiaStats.getTotalRecovered()));
         model.addAttribute("totalConfirmed", formatNumber(allIndiaStats.getTotalConfirmed()));
         model.addAttribute("totalDeath", formatNumber(allIndiaStats.getTotalDeath()));
@@ -67,6 +72,13 @@ public class DataController {
         model.addAttribute("TotalCountWorldWide", formatNumber(totalCountWorldWide));
         return "home";
     }
+
+    @GetMapping(path = "/metric")
+    public ResponseEntity<Map> metric() throws IOException {
+        return ResponseEntity.ok().body(metricService.getFullMetric());
+    }
+
+
 
     private String formatNumber(long num) {
         if (num > 999 && num < 1000000) {
