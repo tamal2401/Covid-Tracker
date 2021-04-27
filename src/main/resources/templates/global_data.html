@@ -14,6 +14,9 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
     <link rel="canonical" href="https://getbootstrap.com/docs/4.4/components/navbar/">
 
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <!--JS Source tags-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
@@ -38,6 +41,12 @@
         }
 		#custom-nav {
 			box-shadow: 0px 8px 15px #ddddce;
+		}
+		.num {
+		    text-align:center;
+		}
+		td, th {
+		    text-align:center;
 		}
 
 </style>
@@ -68,20 +77,25 @@
 <div class="container">
 
     <br>
-    <h2> Global COVID19 data representation dashboard </h2>
-    <br>
-
     <div class="row">
-        <div class="col-12">
+        <div class="col-9">
+            <h2> Global COVID19 data representation dashboard </h2>
+        </div>
+        <div class="col-3">
+            <input class="form-control mr-sm-2" id="myInput" onkeyup="myFunction()" type="text"
+                   placeholder="Search for States.." aria-label="Search">
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-5">
             <h6>Total number of Corona Effected people worldwide : </h6>
             <div class="num"><span th:text="${TotalCountWorldWide}"></span></div>
         </div>
     </div>
     <br>
-
-
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped">
+    <div class="covid-table table-responsive">
+        <table class="table table-bordered table-striped" id="dataTable">
             <tr>
                 <th>Sl. No</th>
                 <th>Country</th>
@@ -123,7 +137,31 @@
 <!--    $(".num").counterUp({delay:10,time:1000});-->
 
 
+
+</script>
+<script>
+function myFunction() {
+  // Declare variables
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("dataTable");
+  tr = table.getElementsByTagName("tr");
+
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 1; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[1];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
+
 </script>
 </body>
-
 </html>

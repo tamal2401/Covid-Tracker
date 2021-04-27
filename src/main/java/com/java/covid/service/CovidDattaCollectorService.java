@@ -74,7 +74,8 @@ public class CovidDattaCollectorService {
             model.setChangeInCasualties(getCellValue(record, 1) - getCellValue(record, 2));
             tempStats.add(model);
         });
-        this.allStats = sortDataCountryWise(tempStats);;
+        this.allStats = sortDataCountryWise(tempStats);
+        ;
         System.out.println("global data fetched");
     }
 
@@ -194,13 +195,24 @@ public class CovidDattaCollectorService {
         int totaldeaths = allStateData.stream().mapToInt(each -> each.getDeaths()).sum();
         int totalRecovered = allStateData.stream().mapToInt(each -> each.getRecovered()).sum();
         JSONArray testedArray = obj.getJSONArray("tested");
-        String totalVaccineted = testedArray.getJSONObject(testedArray.length()-1).optString("totalindividualsvaccinated");
+        long totalVaccineted = 0;
+        int counter = 1;
+        while (true) {
+            String vaccinetedCount = testedArray.getJSONObject(testedArray.length() - counter)
+                    .optString("totalindividualsvaccinated");
+            if(!StringUtils.isEmpty(vaccinetedCount)){
+                totalVaccineted = Long.parseLong(vaccinetedCount);
+                break;
+            }else{
+                counter++;
+            }
+        }
 
         this.consolidatedDataOfIndia.setStateData(allStateData);
         this.consolidatedDataOfIndia.setTotalConfirmed(totalConfirmed);
         this.consolidatedDataOfIndia.setTotalDeath(totaldeaths);
         this.consolidatedDataOfIndia.setTotalRecovered(totalRecovered);
-        this.consolidatedDataOfIndia.setTotalVaccineted(Long.parseLong(totalVaccineted));
+        this.consolidatedDataOfIndia.setTotalVaccineted(totalVaccineted);
         this.consolidatedDataOfIndia.setLastUpdated(getCurrentTime());
     }
 
@@ -292,7 +304,7 @@ public class CovidDattaCollectorService {
     @PreDestroy
     public void preDestroy() throws IOException {
         // String stateDataJson = new Gson().toJson(consolidatedDataOfIndia);
-        if(consolidatedDataOfIndia.getStateData().size()>=1){
+        if (consolidatedDataOfIndia.getStateData().size() >= 1) {
             mapper.writeValue(new File("src/main/resources/StateWise_Data/state_covid19_data.json"), consolidatedDataOfIndia);
         }
     }

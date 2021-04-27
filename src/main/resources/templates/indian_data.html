@@ -39,6 +39,10 @@
 		#custom-nav {
 			box-shadow: 0px 8px 15px #ddddce;
 		}
+		.mx-1, tr, td {
+		    text-align:center;
+		}
+
 </style>
 <body>
 
@@ -65,29 +69,35 @@
 </nav>
 
 <div class="container">
-
     <br>
-    <h2> COVID19 data representation dashboard of India </h2>
-    <br>
-
     <div class="row">
-        <div class="col mx-1" style="text-align:center;">
+        <div class="col-9">
+            <h2> COVID19 data representation dashboard of India </h2>
+        </div>
+        <div class="col-3">
+            <input class="form-control mr-sm-2" id="myInput" onkeyup="myFunction()" type="text"
+                   placeholder="Search for States.." aria-label="Search">
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col mx-1">
             <h6>Total Confirmed Count : </h6>
             <div class="num"><span th:text="${totalConfirmed}"></span></div>
         </div>
-        <div class="col mx-1" style="text-align:center;">
+        <div class="col mx-1">
             <h6>Total Death Count : </h6>
             <div class="num"><span th:text="${totalDeath}"></span></div>
         </div>
-        <div class="col mx-1" style="text-align:center;">
+        <div class="col mx-1">
             <h6>Total Cured Count : </h6>
             <div class="num"><span th:text="${totalCured}"></span></div>
         </div>
-        <div class="col mx-1" style="text-align:center;">
+        <div class="col mx-1">
             <h6>Last Updated:</h6>
             <div class="text"><span th:text="${lastUpdated}"></span></div>
         </div>
-        <div class="col mx-1" style="text-align:center;">
+        <div class="col mx-1">
             <h6>Total Vaccineted:</h6>
             <div class="text"><span th:text="${totalVaccineted}"></span></div>
         </div>
@@ -95,7 +105,7 @@
     <br>
 
     <div class="table-responsive">
-        <table class="table table-bordered table-striped" border="2">
+        <table class="table table-bordered table-striped" border="2" id="dataTable">
             <tr>
                 <th>Sl. No</th>
                 <th>State of India</th>
@@ -144,6 +154,31 @@
 
 
 
+
+
+</script>
+<script>
+function myFunction() {
+  // Declare variables
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("dataTable");
+  tr = table.getElementsByTagName("tr");
+
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 1; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[1];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
 
 </script>
 </body>
