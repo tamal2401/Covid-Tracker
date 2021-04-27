@@ -53,9 +53,9 @@ public class MetricServiceImpl implements MetricService {
         metricMap = new ConcurrentHashMap<>();
         try {
             metricMap = this.mapper.readValue(ResourceUtils.getFile(
-                    "classpath:metric/metrics.json"), ConcurrentHashMap.class);
+                    "src/main/resources/metric/metrics.json"), ConcurrentHashMap.class);
         } catch (IOException e) {
-            log.error("Error occurred while reading application metrics.json file. Termination application start up");
+            log.error("Error occured while reading application metrics.json file. Termination application start up");
             e.printStackTrace();
             System.exit(11);
         }
